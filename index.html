@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Feastly — Your Digital Recipe Book</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --peach: #FFE5D9;
+    --mint: #D6F5E3;
+    --lavender: #EDE9FE;
+    --lemon: #FEF9C3;
+    --rose: #FCE7F3;
+    --sky: #E0F2FE;
+    --accent-orange: #F97316;
+    --accent-green: #22C55E;
+    --accent-purple: #8B5CF6;
+    --accent-pink: #EC4899;
+    --accent-blue: #0EA5E9;
+    --text-dark: #1A1A2E;
+    --text-mid: #4A4A6A;
+    --text-light: #9090B0;
+    --bg: #FDFCF8;
+    --white: #FFFFFF;
+    --border: #EEEAE2;
+    --card-radius: 20px;
+    --pill-radius: 999px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text-dark);
+    overflow-x: hidden;
+  }
+
+  /* ---- NAV ---- */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(253,252,248,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 5%;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+  }
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem; font-weight: 600;
+    color: var(--text-dark);
+    letter-spacing: -0.5px;
+  }
+  .logo span { color: var(--accent-orange); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a { text-decoration: none; color: var(--text-mid); font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--accent-orange); }
+  .nav-right { display: flex; gap: 12px; align-items: center; }
+  .btn-sm {
+    padding: 8px 18px; border-radius: var(--pill-radius);
+    font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 600;
+    cursor: pointer; border: none; transition: all 0.2s;
+  }
+  .btn-outline { background: transparent; border: 1.5px solid var(--border); color: var(--text-mid); }
+  .btn-fill { background: var(--accent-orange); color: white; }
+  .btn-fill:hover { background: #ea6a08; transform: translateY(-1px); }
+
+  /* ---- HERO ---- */
+  .hero {
+    padding: 5% 5% 4%;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;
+    align-items: center; min-height: 520px;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--lemon); color: #92400E;
+    padding: 6px 14px; border-radius: var(--pill-radius);
+    font-size: 0.8rem; font-weight: 600; margin-bottom: 1.2rem;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.4rem, 4vw, 3.8rem);
+    line-height: 1.15; font-weight: 600; margin-bottom: 1rem;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent-orange); }
+  .hero p { color: var(--text-mid); font-size: 1.05rem; line-height: 1.7; margin-bottom: 2rem; }
+  .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn-lg {
+    padding: 14px 28px; border-radius: var(--pill-radius);
+    font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 600;
+    cursor: pointer; border: none; transition: all 0.25s;
+  }
+  .btn-primary { background: var(--accent-orange); color: white; }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(249,115,22,0.3); }
+  .btn-secondary { background: white; color: var(--text-dark); border: 1.5px solid var(--border); }
+  .btn-secondary:hover { border-color: var(--accent-orange); color: var(--accent-orange); }
+
+  /* Hero visual */
+  .hero-visual {
+    position: relative; display: flex; flex-wrap: wrap; gap: 12px;
+    justify-content: center;
+  }
+  .food-card-mini {
+    background: white; border-radius: 16px; padding: 14px;
+    border: 1px solid var(--border); text-align: center;
+    width: calc(50% - 6px); transition: transform 0.2s;
+  }
+  .food-card-mini:hover { transform: translateY(-4px); }
+  .food-card-mini .emoji { font-size: 2.5rem; display: block; margin-bottom: 6px; }
+  .food-card-mini .name { font-size: 0.8rem; font-weight: 600; color: var(--text-dark); }
+  .food-card-mini .tag {
+    display: inline-block; margin-top: 4px;
+    background: var(--peach); color: var(--accent-orange);
+    font-size: 0.7rem; font-weight: 600; padding: 2px 8px; border-radius: 999px;
+  }
+  .floating-badge {
+    position: absolute; background: white; border-radius: 12px;
+    padding: 8px 14px; border: 1px solid var(--border);
+    font-size: 0.78rem; font-weight: 600; white-space: nowrap;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .fb-1 { top: -12px; right: 20px; }
+  .fb-2 { bottom: -12px; left: 10px; }
+
+  /* ---- DIET FILTER TABS ---- */
+  .section { padding: 3% 5%; }
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 600; }
+  .section-subtitle { color: var(--text-mid); font-size: 0.9rem; margin-top: 4px; }
+  .see-all { color: var(--accent-orange); font-size: 0.9rem; font-weight: 600; text-decoration: none; cursor: pointer; }
+
+  .diet-tabs { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 2rem; }
+  .diet-tab {
+    padding: 9px 20px; border-radius: var(--pill-radius);
+    font-size: 0.85rem; font-weight: 600; cursor: pointer;
+    border: 1.5px solid var(--border); background: white;
+    transition: all 0.2s; color: var(--text-mid);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .diet-tab.active, .diet-tab:hover {
+    border-color: var(--accent-orange); color: var(--accent-orange);
+    background: var(--peach);
+  }
+  .diet-tab.veg.active { border-color: var(--accent-green); color: var(--accent-green); background: var(--mint); }
+  .diet-tab.veg:hover { border-color: var(--accent-green); color: var(--accent-green); background: var(--mint); }
+
+  /* ---- INGREDIENT FINDER ---- */
+  .finder-box {
+    background: white; border-radius: var(--card-radius);
+    border: 1px solid var(--border); padding: 2rem;
+    margin-bottom: 3rem;
+  }
+  .finder-box h3 { font-family: 'Playfair Display', serif; font-size: 1.3rem; margin-bottom: 0.5rem; }
+  .finder-box p { color: var(--text-mid); font-size: 0.9rem; margin-bottom: 1.2rem; }
+  .ingredient-input-row { display: flex; gap: 10px; margin-bottom: 1rem; }
+  .ing-input {
+    flex: 1; padding: 12px 16px; border-radius: 12px;
+    border: 1.5px solid var(--border); font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem; outline: none; background: var(--bg);
+    transition: border-color 0.2s;
+  }
+  .ing-input:focus { border-color: var(--accent-orange); }
+  .ing-add-btn {
+    padding: 12px 20px; background: var(--accent-orange); color: white;
+    border: none; border-radius: 12px; font-weight: 600; font-size: 0.9rem;
+    cursor: pointer; transition: all 0.2s; white-space: nowrap;
+  }
+  .ing-add-btn:hover { background: #ea6a08; }
+  .ingredient-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1rem; }
+  .chip {
+    background: var(--peach); color: var(--accent-orange);
+    padding: 6px 14px; border-radius: 999px; font-size: 0.82rem; font-weight: 600;
+    display: flex; align-items: center; gap: 6px; cursor: pointer;
+  }
+  .chip .remove { opacity: 0.6; font-size: 1rem; }
+  .chip:hover .remove { opacity: 1; }
+  .find-btn {
+    width: 100%; padding: 14px; background: linear-gradient(135deg, #F97316, #FBBF24);
+    color: white; border: none; border-radius: 14px; font-weight: 700;
+    font-size: 1rem; cursor: pointer; transition: all 0.25s; font-family: 'DM Sans', sans-serif;
+  }
+  .find-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(249,115,22,0.3); }
+
+  /* Results from finder */
+  .finder-results { display: none; }
+  .finder-results.show { display: block; }
+  .result-recipe-card {
+    background: var(--bg); border-radius: 14px; border: 1px solid var(--border);
+    padding: 1rem 1.2rem; margin-top: 10px; display: flex; align-items: center; gap: 14px;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .result-recipe-card:hover { background: white; border-color: var(--accent-orange); transform: translateX(4px); }
+  .result-emoji { font-size: 2rem; width: 50px; text-align: center; }
+  .result-info h4 { font-weight: 600; font-size: 0.95rem; }
+  .result-info p { font-size: 0.8rem; color: var(--text-mid); margin-top: 2px; }
+  .result-meta { margin-left: auto; text-align: right; }
+  .result-meta .match { font-size: 0.78rem; font-weight: 700; color: var(--accent-green); }
+  .result-meta .time { font-size: 0.78rem; color: var(--text-light); }
+
+  /* ---- RECIPE CARDS GRID ---- */
+  .recipe-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+  .recipe-card {
+    background: white; border-radius: var(--card-radius);
+    border: 1px solid var(--border); overflow: hidden;
+    transition: all 0.25s; cursor: pointer;
+    position: relative;
+  }
+  .recipe-card:hover { transform: translateY(-6px); box-shadow: 0 16px 48px rgba(0,0,0,0.1); }
+  .recipe-card-img {
+    height: 180px; display: flex; align-items: center; justify-content: center;
+    font-size: 4rem; position: relative;
+  }
+  .recipe-card-badge {
+    position: absolute; top: 12px; left: 12px;
+    padding: 4px 10px; border-radius: 999px; font-size: 0.72rem; font-weight: 700;
+    backdrop-filter: blur(8px);
+  }
+  .badge-veg { background: rgba(34,197,94,0.15); color: #15803D; }
+  .badge-nonveg { background: rgba(239,68,68,0.15); color: #B91C1C; }
+  .badge-vegan { background: rgba(34,197,94,0.2); color: #166534; }
+  .recipe-card-body { padding: 1rem 1.2rem 1.2rem; }
+  .recipe-card-body h3 { font-weight: 600; font-size: 1rem; margin-bottom: 4px; }
+  .recipe-card-body p { color: var(--text-mid); font-size: 0.82rem; line-height: 1.5; margin-bottom: 10px; }
+  .recipe-meta { display: flex; gap: 14px; font-size: 0.78rem; color: var(--text-light); }
+  .recipe-meta span { display: flex; align-items: center; gap: 4px; }
+  .difficulty { margin-top: 8px; }
+  .diff-dot {
+    display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 3px;
+  }
+  .diff-easy .diff-dot { background: var(--accent-green); }
+  .diff-medium .diff-dot { background: #F59E0B; }
+  .diff-hard .diff-dot { background: #EF4444; }
+  .diff-inactive { background: var(--border) !important; }
+
+  /* ---- MAP SECTION ---- */
+  .map-section { padding: 3% 5%; }
+  .world-map-container {
+    background: white; border-radius: var(--card-radius);
+    border: 1px solid var(--border); padding: 2rem; overflow: hidden;
+  }
+  .country-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin-top: 1.5rem; }
+  .country-btn {
+    background: var(--bg); border: 1.5px solid var(--border);
+    border-radius: 14px; padding: 14px; text-align: center;
+    cursor: pointer; transition: all 0.2s; position: relative;
+  }
+  .country-btn:hover, .country-btn.selected {
+    background: white; border-color: var(--accent-orange);
+    transform: translateY(-3px); box-shadow: 0 8px 24px rgba(249,115,22,0.15);
+  }
+  .country-btn .flag { font-size: 2rem; display: block; margin-bottom: 4px; }
+  .country-btn .cname { font-size: 0.8rem; font-weight: 600; color: var(--text-dark); }
+  .country-btn .dish-count { font-size: 0.72rem; color: var(--text-light); margin-top: 2px; }
+  .country-recipes { display: none; }
+  .country-recipes.show { display: block; }
+  .country-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 1.5rem; background: var(--peach); border-radius: 14px;
+    margin-top: 1.5rem; margin-bottom: 1rem;
+  }
+  .country-header .big-flag { font-size: 3rem; }
+  .country-header h3 { font-family: 'Playfair Display', serif; font-size: 1.4rem; }
+  .country-header p { color: var(--text-mid); font-size: 0.88rem; margin-top: 2px; }
+
+  /* ---- CHEF CATEGORIES ---- */
+  .chef-cats { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; margin-bottom: 2.5rem; }
+  .chef-cat-card {
+    border-radius: 16px; padding: 1.4rem; cursor: pointer;
+    transition: all 0.2s; position: relative; overflow: hidden;
+  }
+  .chef-cat-card:hover { transform: translateY(-4px); }
+  .chef-cat-card .cat-icon { font-size: 2.2rem; margin-bottom: 8px; display: block; }
+  .chef-cat-card .cat-title { font-weight: 700; font-size: 0.95rem; }
+  .chef-cat-card .cat-sub { font-size: 0.78rem; margin-top: 3px; opacity: 0.8; }
+  .cat-1 { background: var(--peach); color: #92400E; }
+  .cat-2 { background: var(--mint); color: #065F46; }
+  .cat-3 { background: var(--lavender); color: #4C1D95; }
+  .cat-4 { background: var(--lemon); color: #78350F; }
+  .cat-5 { background: var(--rose); color: #831843; }
+  .cat-6 { background: var(--sky); color: #0C4A6E; }
+
+  /* ---- RECIPE MODAL ---- */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 999;
+    background: rgba(20,20,40,0.55); backdrop-filter: blur(6px);
+    overflow-y: auto; padding: 2rem;
+  }
+  .modal-overlay.open { display: flex; align-items: flex-start; justify-content: center; }
+  .modal {
+    background: white; border-radius: 24px; max-width: 680px; width: 100%;
+    margin: auto; overflow: hidden; position: relative;
+  }
+  .modal-hero {
+    background: var(--peach); padding: 3rem 2.5rem 2rem;
+    display: flex; align-items: center; gap: 1.5rem;
+  }
+  .modal-emoji { font-size: 5rem; }
+  .modal-title-block h2 {
+    font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 600;
+  }
+  .modal-title-block p { color: var(--text-mid); margin-top: 6px; font-size: 0.9rem; }
+  .modal-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .modal-tag {
+    padding: 4px 12px; border-radius: 999px; font-size: 0.75rem; font-weight: 700;
+    background: white;
+  }
+  .modal-body { padding: 2rem 2.5rem; }
+  .modal-close {
+    position: absolute; top: 16px; right: 20px;
+    background: white; border: none; border-radius: 50%;
+    width: 36px; height: 36px; font-size: 1.2rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  .info-row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 1.5rem; }
+  .info-pill {
+    background: var(--bg); border-radius: 10px; padding: 10px 16px;
+    font-size: 0.82rem; font-weight: 500; text-align: center; flex: 1; min-width: 80px;
+  }
+  .info-pill .label { color: var(--text-light); font-size: 0.72rem; margin-bottom: 3px; }
+  .info-pill .value { font-weight: 700; font-size: 0.95rem; color: var(--text-dark); }
+  .modal-section-title {
+    font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 600;
+    margin: 1.5rem 0 1rem; display: flex; align-items: center; gap: 8px;
+  }
+  .ingredient-list { list-style: none; }
+  .ingredient-list li {
+    padding: 8px 0; border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; font-size: 0.9rem;
+  }
+  .ingredient-list li:last-child { border-bottom: none; }
+  .ing-name { font-weight: 500; }
+  .ing-amount { color: var(--text-mid); font-size: 0.85rem; }
+  .step-item { display: flex; gap: 14px; margin-bottom: 1.2rem; }
+  .step-num {
+    width: 28px; height: 28px; border-radius: 50%; background: var(--peach);
+    color: var(--accent-orange); font-weight: 700; font-size: 0.8rem;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;
+  }
+  .step-text { font-size: 0.9rem; line-height: 1.6; color: var(--text-mid); }
+  .tip-box {
+    background: var(--lemon); border-radius: 14px; padding: 1.2rem;
+    margin-top: 1.5rem; font-size: 0.88rem; line-height: 1.6; color: #78350F;
+  }
+  .tip-box strong { display: block; margin-bottom: 4px; font-size: 0.9rem; }
+
+  /* ---- TRENDING ---- */
+  .trending-strip { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 8px; }
+  .trending-strip::-webkit-scrollbar { height: 4px; }
+  .trending-strip::-webkit-scrollbar-track { background: var(--border); border-radius: 999px; }
+  .trending-strip::-webkit-scrollbar-thumb { background: var(--accent-orange); border-radius: 999px; }
+  .trending-card {
+    background: white; border-radius: 16px; border: 1px solid var(--border);
+    min-width: 160px; padding: 1rem; cursor: pointer; transition: all 0.2s; flex-shrink: 0;
+    text-align: center;
+  }
+  .trending-card:hover { transform: translateY(-4px); border-color: var(--accent-orange); }
+  .trending-card .emoji { font-size: 2.5rem; display: block; margin-bottom: 6px; }
+  .trending-card .tname { font-size: 0.82rem; font-weight: 600; }
+  .trending-card .tcountry { font-size: 0.72rem; color: var(--text-light); }
+  .trend-badge {
+    position: absolute; top: 8px; right: 8px; background: var(--accent-orange);
+    color: white; font-size: 0.65rem; font-weight: 700; padding: 2px 7px; border-radius: 999px;
+  }
+
+  /* ---- TIPS & TOOLS ---- */
+  .tips-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+  .tip-card {
+    background: white; border-radius: 16px; border: 1px solid var(--border);
+    padding: 1.4rem; cursor: pointer; transition: all 0.2s;
+  }
+  .tip-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+  .tip-card .tip-icon { font-size: 1.8rem; margin-bottom: 8px; }
+  .tip-card h4 { font-weight: 600; font-size: 0.92rem; margin-bottom: 4px; }
+  .tip-card p { font-size: 0.8rem; color: var(--text-mid); line-height: 1.5; }
+
+  /* ---- FOOTER ---- */
+  footer {
+    background: var(--text-dark); color: #8888AA; padding: 3rem 5%;
+    margin-top: 4rem;
+  }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
+  .footer-brand .logo { color: white; font-size: 1.4rem; }
+  .footer-brand p { font-size: 0.85rem; line-height: 1.7; margin-top: 8px; color: #8888AA; }
+  footer h5 { color: white; font-size: 0.85rem; font-weight: 600; margin-bottom: 12px; }
+  footer ul { list-style: none; }
+  footer ul li { margin-bottom: 8px; }
+  footer ul a { color: #8888AA; text-decoration: none; font-size: 0.82rem; transition: color 0.2s; }
+  footer ul a:hover { color: var(--accent-orange); }
+  .footer-bottom { border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1.5rem; font-size: 0.8rem; }
+
+  /* ---- SEARCH ---- */
+  .search-bar-wrap { position: relative; max-width: 480px; }
+  .search-bar {
+    width: 100%; padding: 12px 16px 12px 44px; border-radius: 12px;
+    border: 1.5px solid var(--border); font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem; background: white; outline: none; transition: border-color 0.2s;
+  }
+  .search-bar:focus { border-color: var(--accent-orange); }
+  .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 1rem; color: var(--text-light); }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-visual { display: none; }
+    .nav-links { display: none; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Feast<span>ly</span> 📖</div>
+  <ul class="nav-links">
+    <li><a href="#" onclick="scrollToSection('finder')">Ingredient Finder</a></li>
+    <li><a href="#" onclick="scrollToSection('world')">World Cuisine</a></li>
+    <li><a href="#" onclick="scrollToSection('chef')">Chef's Corner</a></li>
+    <li><a href="#" onclick="scrollToSection('tips')">Tips & Tools</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="btn-sm btn-outline" onclick="toggleFav()">❤️ Saved</button>
+    <button class="btn-sm btn-fill">Sign Up Free</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">✨ 500+ Recipes Inside</div>
+    <h1>Cook something <em>delicious</em> today</h1>
+    <p>Your smart recipe companion — find dishes by ingredients you have, explore world cuisines, and cook like a pro with step-by-step guides.</p>
+    <div class="hero-actions">
+      <button class="btn-lg btn-primary" onclick="scrollToSection('finder')">🔍 Find by Ingredients</button>
+      <button class="btn-lg btn-secondary" onclick="scrollToSection('world')">🌍 Explore World Cuisine</button>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="food-card-mini" onclick="openRecipe('pasta')">
+      <span class="emoji">🍝</span>
+      <div class="name">Spaghetti Carbonara</div>
+      <span class="tag">Italian</span>
+    </div>
+    <div class="food-card-mini" onclick="openRecipe('sushi')">
+      <span class="emoji">🍣</span>
+      <div class="name">Salmon Sushi Roll</div>
+      <span class="tag">Japanese</span>
+    </div>
+    <div class="food-card-mini" onclick="openRecipe('curry')">
+      <span class="emoji">🍛</span>
+      <div class="name">Butter Chicken</div>
+      <span class="tag">Indian</span>
+    </div>
+    <div class="food-card-mini" onclick="openRecipe('tacos')">
+      <span class="emoji">🌮</span>
+      <div class="name">Street Tacos</div>
+      <span class="tag">Mexican</span>
+    </div>
+    <div class="floating-badge fb-1">🔥 Trending Now</div>
+    <div class="floating-badge fb-2">⏱ Under 30 Mins</div>
+  </div>
+</section>
+
+<!-- INGREDIENT FINDER -->
+<section class="section" id="finder">
+  <div class="section-header">
+    <div>
+      <div class="section-title">🧺 What's in Your Fridge?</div>
+      <div class="section-subtitle">Add ingredients you have and we'll find the perfect recipes</div>
+    </div>
+  </div>
+
+  <div class="finder-box">
+    <h3>Ingredient Finder</h3>
+    <p>Type ingredients below and hit Add — we'll match recipes you can actually make!</p>
+    <div class="ingredient-input-row">
+      <input class="ing-input" id="ingInput" type="text" placeholder="e.g. chicken, garlic, tomatoes..." onkeydown="if(event.key==='Enter')addIngredient()">
+      <button class="ing-add-btn" onclick="addIngredient()">+ Add</button>
+    </div>
+    <div class="ingredient-chips" id="chipContainer"></div>
+
+    <!-- Quick adds -->
+    <div style="margin-bottom: 1rem;">
+      <span style="font-size:0.8rem;color:var(--text-light);font-weight:600;margin-right:8px;">Quick add:</span>
+      <span onclick="quickAdd('Chicken')" style="cursor:pointer;font-size:0.82rem;color:var(--accent-orange);font-weight:600;margin-right:10px;">🍗 Chicken</span>
+      <span onclick="quickAdd('Eggs')" style="cursor:pointer;font-size:0.82rem;color:var(--accent-orange);font-weight:600;margin-right:10px;">🥚 Eggs</span>
+      <span onclick="quickAdd('Rice')" style="cursor:pointer;font-size:0.82rem;color:var(--accent-orange);font-weight:600;margin-right:10px;">🍚 Rice</span>
+      <span onclick="quickAdd('Pasta')" style="cursor:pointer;font-size:0.82rem;color:var(--accent-orange);font-weight:600;margin-right:10px;">🍝 Pasta</span>
+      <span onclick="quickAdd('Tomatoes')" style="cursor:pointer;font-size:0.82rem;color:var(--accent-orange);font-weight:600;margin-right:10px;">🍅 Tomatoes</span>
+      <span onclick="quickAdd('Garlic')" style="cursor:pointer;font-size:0.82rem;color:var(--accent-orange);font-weight:600;">🧄 Garlic</span>
+    </div>
+    <button class="find-btn" onclick="findRecipes()">🔍 Find Recipes for Me!</button>
+
+    <div class="finder-results" id="finderResults">
+      <div style="font-weight:600;margin:1.2rem 0 0.5rem;font-size:0.9rem;">✅ Recipes you can make:</div>
+      <div id="resultsList"></div>
+    </div>
+  </div>
+</section>
+
+<!-- DIET FILTER + RECIPE GRID -->
+<section class="section">
+  <div class="section-header">
+    <div>
+      <div class="section-title">🍽 Browse All Recipes</div>
+      <div class="section-subtitle">Filter by diet preference and category</div>
+    </div>
+    <a class="see-all" onclick="alert('Full recipe library coming soon!')">See all →</a>
+  </div>
+
+  <div class="diet-tabs">
+    <button class="diet-tab active" onclick="filterDiet(this,'all')">🍴 All</button>
+    <button class="diet-tab veg" onclick="filterDiet(this,'veg')">🥗 Vegetarian</button>
+    <button class="diet-tab veg" onclick="filterDiet(this,'vegan')">🌱 Vegan</button>
+    <button class="diet-tab" onclick="filterDiet(this,'nonveg')">🍗 Non-Veg</button>
+    <button class="diet-tab" onclick="filterDiet(this,'chicken')">🍗 Chicken</button>
+    <button class="diet-tab" onclick="filterDiet(this,'seafood')">🐟 Seafood</button>
+    <button class="diet-tab" onclick="filterDiet(this,'lamb')">🥩 Lamb & Goat</button>
+    <button class="diet-tab" onclick="filterDiet(this,'goose')">🦆 Goose & Duck</button>
+    <button class="diet-tab" onclick="filterDiet(this,'quick')">⚡ Under 30 Mins</button>
+  </div>
+
+  <div class="recipe-grid" id="recipeGrid">
+    <!-- Cards injected by JS -->
+  </div>
+</section>
+
+<!-- CHEF'S CORNER -->
+<section class="section" id="chef">
+  <div class="section-header">
+    <div>
+      <div class="section-title">👨‍🍳 Chef's Corner</div>
+      <div class="section-subtitle">Explore by cooking style and skill level</div>
+    </div>
+  </div>
+
+  <div class="chef-cats">
+    <div class="chef-cat-card cat-1" onclick="filterChef('simple')">
+      <span class="cat-icon">🥄</span>
+      <div class="cat-title">Simple & Easy</div>
+      <div class="cat-sub">5 ingredients max</div>
+    </div>
+    <div class="chef-cat-card cat-2" onclick="filterChef('gourmet')">
+      <span class="cat-icon">🍽</span>
+      <div class="cat-title">Gourmet Chef</div>
+      <div class="cat-sub">Restaurant-level dishes</div>
+    </div>
+    <div class="chef-cat-card cat-3" onclick="filterChef('baking')">
+      <span class="cat-icon">🍞</span>
+      <div class="cat-title">Baking & Breads</div>
+      <div class="cat-sub">Sweets, pastries & more</div>
+    </div>
+    <div class="chef-cat-card cat-4" onclick="filterChef('bbq')">
+      <span class="cat-icon">🔥</span>
+      <div class="cat-title">BBQ & Grill</div>
+      <div class="cat-sub">Smoke, char & flames</div>
+    </div>
+    <div class="chef-cat-card cat-5" onclick="filterChef('dessert')">
+      <span class="cat-icon">🍰</span>
+      <div class="cat-title">Desserts</div>
+      <div class="cat-sub">Sweet endings</div>
+    </div>
+    <div class="chef-cat-card cat-6" onclick="filterChef('healthy')">
+      <span class="cat-icon">🥑</span>
+      <div class="cat-title">Healthy & Clean</div>
+      <div class="cat-sub">Nutritious & light</div>
+    </div>
+  </div>
+
+  <div class="recipe-grid" id="chefGrid"></div>
+</section>
+
+<!-- WORLD MAP SECTION -->
+<section class="map-section" id="world">
+  <div class="section-header">
+    <div>
+      <div class="section-title">🌍 World Cuisine Explorer</div>
+      <div class="section-subtitle">Tap a country to discover its famous dishes & how to make them</div>
+    </div>
+  </div>
+
+  <div class="world-map-container">
+    <!-- SVG World Map Simplified -->
+    <div style="text-align:center;margin-bottom:1rem;font-size:0.88rem;color:var(--text-light);">🗺 Select a region or click a country below</div>
+    
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1.5rem;justify-content:center;">
+      <button class="diet-tab" onclick="filterRegion(this,'all')">🌐 All</button>
+      <button class="diet-tab" onclick="filterRegion(this,'asia')">🏯 Asia</button>
+      <button class="diet-tab" onclick="filterRegion(this,'europe')">🏛 Europe</button>
+      <button class="diet-tab" onclick="filterRegion(this,'americas')">🗽 Americas</button>
+      <button class="diet-tab" onclick="filterRegion(this,'middleeast')">🕌 Middle East</button>
+      <button class="diet-tab" onclick="filterRegion(this,'africa')">🌍 Africa</button>
+    </div>
+
+    <div class="country-grid" id="countryGrid"></div>
+
+    <div class="country-recipes" id="countryRecipes"></div>
+  </div>
+</section>
+
+<!-- TRENDING NOW -->
+<section class="section">
+  <div class="section-header">
+    <div>
+      <div class="section-title">🔥 Trending Globally</div>
+      <div class="section-subtitle">What food lovers are cooking this week</div>
+    </div>
+  </div>
+  <div class="trending-strip">
+    <div class="trending-card" style="position:relative;" onclick="openRecipe('ramen')">
+      <div class="trend-badge">#1</div>
+      <span class="emoji">🍜</span>
+      <div class="tname">Tonkotsu Ramen</div>
+      <div class="tcountry">🇯🇵 Japan</div>
+    </div>
+    <div class="trending-card" style="position:relative;" onclick="openRecipe('shakshuka')">
+      <div class="trend-badge">#2</div>
+      <span class="emoji">🍳</span>
+      <div class="tname">Shakshuka</div>
+      <div class="tcountry">🇮🇱 Middle East</div>
+    </div>
+    <div class="trending-card" style="position:relative;" onclick="openRecipe('birria')">
+      <div class="trend-badge">#3</div>
+      <span class="emoji">🌮</span>
+      <div class="tname">Birria Tacos</div>
+      <div class="tcountry">🇲🇽 Mexico</div>
+    </div>
+    <div class="trending-card" onclick="openRecipe('tikka')">
+      <span class="emoji">🍢</span>
+      <div class="tname">Chicken Tikka</div>
+      <div class="tcountry">🇮🇳 India</div>
+    </div>
+    <div class="trending-card" onclick="openRecipe('pho')">
+      <span class="emoji">🍲</span>
+      <div class="tname">Beef Pho</div>
+      <div class="tcountry">🇻🇳 Vietnam</div>
+    </div>
+    <div class="trending-card" onclick="openRecipe('paella')">
+      <span class="emoji">🥘</span>
+      <div class="tname">Seafood Paella</div>
+      <div class="tcountry">🇪🇸 Spain</div>
+    </div>
+    <div class="trending-card" onclick="openRecipe('croissant')">
+      <span class="emoji">🥐</span>
+      <div class="tname">Croissants</div>
+      <div class="tcountry">🇫🇷 France</div>
+    </div>
+    <div class="trending-card" onclick="openRecipe('hummus')">
+      <span class="emoji">🫙</span>
+      <div class="tname">Classic Hummus</div>
+      <div class="tcountry">🇱🇧 Lebanon</div>
+    </div>
+  </div>
+</section>
+
+<!-- TIPS & TOOLS -->
+<section class="section" id="tips">
+  <div class="section-header">
+    <div>
+      <div class="section-title">🛠 Tips & Kitchen Tools</div>
+      <div class="section-subtitle">Level up your cooking game</div>
+    </div>
+  </div>
+  <div class="tips-grid">
+    <div class="tip-card">
+      <div class="tip-icon">🔪</div>
+      <h4>Knife Skills 101</h4>
+      <p>Master julienne, chiffonade, and brunoise cuts like a pro chef.</p>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">🌡️</div>
+      <h4>Temperature Guide</h4>
+      <p>Exact internal temps for chicken, beef, pork, and fish — never overcook again.</p>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">🫙</div>
+      <h4>Pantry Essentials</h4>
+      <p>15 ingredients to always keep stocked for spontaneous cooking.</p>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">⚖️</div>
+      <h4>Unit Converter</h4>
+      <p>Cups to grams, Fahrenheit to Celsius — instant kitchen math.</p>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">📅</div>
+      <h4>Meal Planner</h4>
+      <p>Plan your week's meals and auto-generate a shopping list.</p>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">🧂</div>
+      <h4>Seasoning Guide</h4>
+      <p>Perfect spice combinations for every world cuisine.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo">Feast<span>ly</span> 📖</div>
+      <p>Your digital recipe book for every meal, every mood, every craving. Cook more, stress less.</p>
+    </div>
+    <div>
+      <h5>Discover</h5>
+      <ul>
+        <li><a href="#">World Cuisine</a></li>
+        <li><a href="#">Trending Now</a></li>
+        <li><a href="#">Quick Meals</a></li>
+        <li><a href="#">Chef's Special</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Diet</h5>
+      <ul>
+        <li><a href="#">Vegetarian</a></li>
+        <li><a href="#">Vegan</a></li>
+        <li><a href="#">Keto</a></li>
+        <li><a href="#">Gluten Free</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Community</h5>
+      <ul>
+        <li><a href="#">Submit Recipe</a></li>
+        <li><a href="#">Food Blog</a></li>
+        <li><a href="#">Newsletter</a></li>
+        <li><a href="#">About Us</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 Feastly — Made with ❤️ for food lovers everywhere</p>
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+  <div class="modal" id="recipeModal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-hero" id="modalHero">
+      <div class="modal-emoji" id="modalEmoji"></div>
+      <div class="modal-title-block">
+        <h2 id="modalTitle"></h2>
+        <p id="modalDesc"></p>
+        <div class="modal-tags" id="modalTags"></div>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="info-row" id="modalInfoRow"></div>
+      <div class="modal-section-title">🧺 Ingredients</div>
+      <ul class="ingredient-list" id="modalIngredients"></ul>
+      <div class="modal-section-title">📋 Instructions</div>
+      <div id="modalSteps"></div>
+      <div class="tip-box" id="modalTip"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== DATA =====
+const recipes = [
+  { id:'pasta', emoji:'🍝', name:'Spaghetti Carbonara', desc:'Creamy Roman pasta with egg, pecorino, and guanciale', category:['simple','gourmet'], diet:'nonveg', subtype:'nonveg', country:'italy', region:'europe', time:25, servings:2, difficulty:'medium', color:'#FFF0E8',
+    ingredients:[{n:'Spaghetti',a:'200g'},{n:'Guanciale / Pancetta',a:'100g'},{n:'Eggs',a:'2 whole + 2 yolks'},{n:'Pecorino Romano',a:'80g'},{n:'Black pepper',a:'1 tsp'},{n:'Salt',a:'to taste'}],
+    steps:['Boil salted water and cook spaghetti al dente.','Fry guanciale in a pan until crispy, no oil needed. Set aside.','Whisk eggs, yolks, and grated pecorino in a bowl. Season with pepper.','Reserve 1 cup pasta water. Drain pasta.','Remove pan from heat, add pasta to guanciale, toss.','Add egg mixture slowly, tossing fast. Add pasta water gradually to make it creamy — never scramble!','Serve immediately with extra pecorino and black pepper.'],
+    tip:'💡 Pro tip: The key to Carbonara is temperature. The pan must be OFF heat when you add the egg mixture. The residual heat cooks the eggs to silky perfection. Never use cream — it\'s not authentic!',
+    tags:['Italian','Non-Veg','30 min','Classic']
+  },
+  { id:'curry', emoji:'🍛', name:'Butter Chicken', desc:'Creamy, mildly spiced Indian chicken in tomato-based sauce', category:['gourmet','simple'], diet:'nonveg', subtype:'chicken', country:'india', region:'asia', time:45, servings:4, difficulty:'medium', color:'#FFF5E0',
+    ingredients:[{n:'Chicken thighs',a:'700g'},{n:'Butter',a:'3 tbsp'},{n:'Tomatoes',a:'4 large'},{n:'Heavy cream',a:'150ml'},{n:'Garlic & Ginger paste',a:'2 tbsp'},{n:'Garam masala',a:'2 tsp'},{n:'Kashmiri chili',a:'1 tsp'},{n:'Fenugreek leaves',a:'1 tsp'}],
+    steps:['Marinate chicken in yogurt, spices and ginger-garlic paste for at least 1 hour.','Grill or pan-sear chicken until charred. Set aside.','Melt butter, cook garlic-ginger paste, add tomatoes. Simmer 20 mins.','Blend the sauce until smooth. Strain if desired.','Return to heat, add cream, kashmiri chili, and salt.','Add chicken, simmer 10 mins. Finish with fenugreek.','Serve with naan or basmati rice.'],
+    tip:'💡 Secret: Dried fenugreek leaves (kasuri methi) added at the end is the secret restaurant ingredient that makes butter chicken taste authentic!',
+    tags:['Indian','Non-Veg','Chicken','Comfort Food']
+  },
+  { id:'sushi', emoji:'🍣', name:'Salmon Sushi Roll', desc:'Fresh salmon maki rolls with sushi rice and nori', category:['gourmet'], diet:'nonveg', subtype:'seafood', country:'japan', region:'asia', time:60, servings:2, difficulty:'hard', color:'#E8F5FF',
+    ingredients:[{n:'Sushi-grade salmon',a:'200g'},{n:'Sushi rice',a:'300g'},{n:'Nori sheets',a:'4 sheets'},{n:'Rice vinegar',a:'3 tbsp'},{n:'Sugar',a:'2 tbsp'},{n:'Salt',a:'1 tsp'},{n:'Cucumber',a:'1/2'},{n:'Avocado',a:'1'}],
+    steps:['Cook sushi rice. Season with mixture of vinegar, sugar, and salt. Cool to room temperature.','Slice salmon, cucumber, and avocado into thin strips.','Lay nori on bamboo mat, shiny side down. Wet hands and spread rice evenly.','Leave 2cm gap at the top. Place fillings in a line at the bottom.','Roll firmly using the bamboo mat, tucking tightly.','Seal edge with a little water. Rest for 2 mins.','Slice with a wet sharp knife into 8 pieces. Serve with soy sauce, wasabi, and pickled ginger.'],
+    tip:'💡 Tip: Always use a very sharp, wet knife to cut rolls cleanly. The rice should be body temperature when rolling — not hot or cold.',
+    tags:['Japanese','Seafood','Gourmet','Raw Fish']
+  },
+  { id:'tacos', emoji:'🌮', name:'Street Tacos', desc:'Authentic Mexican street-style tacos with marinated carne asada', category:['simple','bbq'], diet:'nonveg', subtype:'nonveg', country:'mexico', region:'americas', time:30, servings:4, difficulty:'easy', color:'#FFF8E0',
+    ingredients:[{n:'Skirt steak',a:'500g'},{n:'Corn tortillas',a:'12 small'},{n:'White onion',a:'1 small'},{n:'Cilantro',a:'1 bunch'},{n:'Lime',a:'3'},{n:'Cumin & oregano',a:'1 tsp each'},{n:'Garlic',a:'4 cloves'},{n:'Salsa verde',a:'to serve'}],
+    steps:['Marinate steak with lime juice, garlic, cumin, and oregano for 30 mins.','Grill steak on high heat, 3-4 mins per side for medium rare.','Rest 5 mins, then chop into small pieces.','Warm corn tortillas on a dry skillet until slightly charred.','Double-stack tortillas, add meat, top with raw onion and cilantro.','Squeeze fresh lime and serve with salsa verde.'],
+    tip:'💡 Street taco secret: Always use CORN tortillas, not flour. Double-stack them. And the only toppings are white onion and cilantro — keep it simple!',
+    tags:['Mexican','Non-Veg','Quick','Street Food']
+  },
+  { id:'ramen', emoji:'🍜', name:'Tonkotsu Ramen', desc:'Rich pork bone broth with chashu pork and soft-boiled eggs', category:['gourmet'], diet:'nonveg', subtype:'nonveg', country:'japan', region:'asia', time:240, servings:4, difficulty:'hard', color:'#FFF5E8',
+    ingredients:[{n:'Pork bones',a:'1kg'},{n:'Ramen noodles',a:'400g'},{n:'Pork belly (chashu)',a:'400g'},{n:'Eggs',a:'4'},{n:'Soy sauce',a:'4 tbsp'},{n:'Mirin',a:'2 tbsp'},{n:'Spring onions',a:'4'},{n:'Nori',a:'4 sheets'},{n:'Bamboo shoots',a:'optional'}],
+    steps:['Blanch pork bones in boiling water for 10 mins. Drain and rinse.','Simmer bones in fresh water for 4-6 hours for a milky white broth.','Braise pork belly in soy sauce, mirin, and sake for 2 hours. Slice.','Soft-boil eggs for 6.5 mins, then marinate in soy-mirin mix overnight.','Cook ramen noodles separately.','Assemble: noodles in bowl, ladle hot broth, add chashu, egg, nori, spring onions.'],
+    tip:'💡 The longer you boil the bones, the creamier and more collagen-rich the broth becomes. True tonkotsu is worth the 6-hour wait!',
+    tags:['Japanese','Non-Veg','Soup','Weekend Project']
+  },
+  { id:'palak', emoji:'🥗', name:'Palak Paneer', desc:'Fresh spinach curry with soft Indian cottage cheese cubes', category:['simple','healthy'], diet:'veg', subtype:'veg', country:'india', region:'asia', time:30, servings:3, difficulty:'easy', color:'#E8FFE8',
+    ingredients:[{n:'Spinach',a:'500g'},{n:'Paneer',a:'250g'},{n:'Onion',a:'1 large'},{n:'Tomatoes',a:'2'},{n:'Cream',a:'2 tbsp'},{n:'Garam masala',a:'1 tsp'},{n:'Cumin seeds',a:'1 tsp'},{n:'Garlic & Ginger',a:'1 tbsp each'}],
+    steps:['Blanch spinach for 2 mins, then puree until smooth.','Fry cumin in oil, add onion until golden. Add garlic and ginger.','Add tomatoes and cook until mushy. Add spices.','Pour in spinach puree and simmer 5 mins.','Add cubed paneer and cream. Simmer 3 mins.','Serve with naan or jeera rice.'],
+    tip:'💡 Adding a tiny pinch of baking soda to the blanching water keeps the spinach a vibrant green color!',
+    tags:['Indian','Vegetarian','Healthy','Quick']
+  },
+  { id:'shakshuka', emoji:'🍳', name:'Shakshuka', desc:'Eggs poached in spiced tomato pepper sauce', category:['simple','healthy'], diet:'veg', subtype:'veg', country:'israel', region:'middleeast', time:25, servings:3, difficulty:'easy', color:'#FFE8E8',
+    ingredients:[{n:'Eggs',a:'4-6'},{n:'Crushed tomatoes',a:'800g tin'},{n:'Red peppers',a:'2'},{n:'Onion',a:'1'},{n:'Cumin & paprika',a:'1 tsp each'},{n:'Chili',a:'1/2 tsp'},{n:'Garlic',a:'4 cloves'},{n:'Feta cheese',a:'optional'}],
+    steps:['Sauté onion and peppers in olive oil until soft.','Add garlic and spices, cook 1 min.','Pour in crushed tomatoes, season and simmer 10 mins.','Make wells in the sauce and crack eggs in.','Cover and cook until whites are set but yolks still runny.','Crumble feta, add fresh herbs, serve with crusty bread.'],
+    tip:'💡 Cover the pan to steam the eggs faster. Watch closely — the eggs can go from perfect to overdone in under a minute!',
+    tags:['Middle Eastern','Vegetarian','Breakfast','Quick']
+  },
+  { id:'avocado-toast', emoji:'🥑', name:'Avocado Toast', desc:'Gen Z breakfast classic — smashed avo on sourdough', category:['simple','healthy'], diet:'vegan', subtype:'vegan', country:'australia', region:'americas', time:8, servings:1, difficulty:'easy', color:'#EFFFEF',
+    ingredients:[{n:'Sourdough bread',a:'2 slices'},{n:'Ripe avocado',a:'1'},{n:'Lemon juice',a:'1 tbsp'},{n:'Chili flakes',a:'pinch'},{n:'Sea salt & pepper',a:'to taste'},{n:'Microgreens',a:'optional'},{n:'Poached egg',a:'optional'}],
+    steps:['Toast sourdough until golden and crispy.','Smash avocado with lemon juice, salt and pepper.','Spread generously on toast.','Top with chili flakes, microgreens, and optional poached egg.'],
+    tip:'💡 Add everything bagel seasoning or a drizzle of hot honey for a next-level avocado toast!',
+    tags:['Vegan','Breakfast','Quick','Trendy']
+  },
+  { id:'birria', emoji:'🌮', name:'Birria Tacos', desc:'Crispy quesatacos dipped in rich consommé broth', category:['gourmet','bbq'], diet:'nonveg', subtype:'lamb', country:'mexico', region:'americas', time:180, servings:6, difficulty:'hard', color:'#FFE8D8',
+    ingredients:[{n:'Beef short ribs or goat',a:'1.5kg'},{n:'Guajillo chiles',a:'4'},{n:'Ancho chiles',a:'2'},{n:'Corn tortillas',a:'16'},{n:'White onion',a:'1'},{n:'Tomatoes',a:'3'},{n:'Cinnamon & cloves',a:'small amounts'},{n:'Monterey Jack cheese',a:'200g'}],
+    steps:['Toast and soak dried chiles, blend with tomatoes and spices.','Marinate meat for 2+ hours in chile sauce.','Slow cook at low heat for 3 hours until falling apart.','Reserve broth (consommé). Shred the meat.','Dip tortilla in consommé fat, fill with meat and cheese, fold and griddle until crispy.','Serve with a cup of consommé for dipping, topped with onion and cilantro.'],
+    tip:'💡 The red consommé fat on top is pure gold — use it to cook the tortillas. That\'s what gives birria tacos their iconic red color!',
+    tags:['Mexican','Non-Veg','Lamb/Goat','Weekend Project']
+  },
+  { id:'tikka', emoji:'🍢', name:'Chicken Tikka Masala', desc:'Grilled chicken tikka in a rich, creamy masala sauce', category:['gourmet'], diet:'nonveg', subtype:'chicken', country:'india', region:'asia', time:50, servings:4, difficulty:'medium', color:'#FFF0E0',
+    ingredients:[{n:'Chicken breast',a:'700g'},{n:'Yogurt',a:'200g'},{n:'Tikka masala paste',a:'4 tbsp'},{n:'Tomato passata',a:'400ml'},{n:'Heavy cream',a:'100ml'},{n:'Onion',a:'1 large'},{n:'Garlic',a:'4 cloves'},{n:'Fresh ginger',a:'2cm'}],
+    steps:['Marinate chicken in yogurt and tikka paste for 2 hours.','Skewer and grill or bake at 220°C until charred.','Sauté onion, garlic, ginger. Add remaining tikka paste.','Pour in tomato passata. Simmer 15 mins.','Add grilled chicken and cream. Simmer 10 mins.','Garnish with cream swirl and fresh cilantro.'],
+    tip:'💡 Char the chicken a little — those burnt edges add smoky depth that makes tikka masala taste authentic!',
+    tags:['Indian','Chicken','Non-Veg','Popular']
+  },
+  { id:'pho', emoji:'🍲', name:'Beef Pho', desc:'Vietnamese soul-warming noodle soup with aromatic spices', category:['gourmet'], diet:'nonveg', subtype:'nonveg', country:'vietnam', region:'asia', time:180, servings:4, difficulty:'hard', color:'#FFF8E8',
+    ingredients:[{n:'Beef bones',a:'1kg'},{n:'Beef brisket',a:'400g'},{n:'Pho noodles',a:'400g'},{n:'Star anise',a:'5 pods'},{n:'Cinnamon stick',a:'1'},{n:'Fish sauce',a:'3 tbsp'},{n:'Ginger',a:'5cm piece'},{n:'Bean sprouts, basil, lime',a:'to serve'}],
+    steps:['Char ginger and onion directly on flame until blackened. This adds smokiness.','Simmer bones and brisket in water with charred aromatics for 3-4 hours.','Toast star anise and cinnamon in dry pan, add to broth for final hour.','Strain broth, season with fish sauce and salt.','Slice brisket thin. Cook noodles separately.','Serve noodles in bowl, add rare beef slices, ladle hot broth. Add garnishes.'],
+    tip:'💡 The charred ginger and onion are the soul of pho\'s unique flavor. Don\'t skip this step — it removes bitterness and adds incredible depth!',
+    tags:['Vietnamese','Non-Veg','Soup','Weekend Project']
+  },
+  { id:'paella', emoji:'🥘', name:'Seafood Paella', desc:'Spanish rice dish with saffron, shrimp, mussels, and squid', category:['gourmet'], diet:'nonveg', subtype:'seafood', country:'spain', region:'europe', time:60, servings:4, difficulty:'hard', color:'#FFFFE0',
+    ingredients:[{n:'Paella rice (bomba)',a:'400g'},{n:'Shrimp',a:'300g'},{n:'Mussels',a:'500g'},{n:'Squid',a:'200g'},{n:'Saffron',a:'pinch'},{n:'Seafood stock',a:'1.2L'},{n:'Smoked paprika',a:'2 tsp'},{n:'Tomatoes',a:'2'}],
+    steps:['Infuse saffron in warm stock.','Sauté onion, garlic, tomatoes in olive oil in a wide paella pan.','Add squid and paprika, cook 3 mins.','Add rice, stir to coat. Pour in saffron stock. DO NOT stir again.','Arrange shrimp and mussels on top. Cook on medium until liquid is absorbed.','Create socarrat (crispy bottom) on high heat for last 2 mins.','Rest covered for 5 mins, then serve straight from the pan.'],
+    tip:'💡 The "socarrat" — the crispy caramelized rice crust at the bottom — is the most prized part of a paella. Listen for a crackling sound!',
+    tags:['Spanish','Seafood','Gourmet','Rice Dish']
+  },
+  { id:'croissant', emoji:'🥐', name:'Butter Croissants', desc:'Flaky, buttery French pastry with hundreds of layers', category:['baking','gourmet'], diet:'veg', subtype:'veg', country:'france', region:'europe', time:720, servings:8, difficulty:'hard', color:'#FFF8E8',
+    ingredients:[{n:'Bread flour',a:'500g'},{n:'Unsalted butter',a:'300g (for lamination)'},{n:'Milk',a:'200ml'},{n:'Active dry yeast',a:'7g'},{n:'Sugar',a:'50g'},{n:'Salt',a:'10g'},{n:'Egg',a:'1 (for egg wash)'}],
+    steps:['Mix flour, yeast, sugar, salt, and milk into a dough. Knead until smooth. Chill 1 hour.','Beat cold butter into a flat square. Keep it cold but pliable.','Roll dough, encase butter, fold and roll 3 times. Chill 30 mins between each fold.','After 3 folds, roll thin and cut into long triangles.','Roll each triangle from base to tip. Curve ends slightly.','Prove at room temperature 2-3 hours until doubled and jiggly.','Brush with egg wash, bake at 190°C for 18-20 mins until deep golden.'],
+    tip:'💡 Cold butter is everything. If the butter melts into the dough at any point, the layers will disappear. Keep everything cold and work quickly!',
+    tags:['French','Vegetarian','Baking','Weekend Project']
+  },
+  { id:'hummus', emoji:'🫙', name:'Classic Hummus', desc:'Smooth, creamy Lebanese chickpea dip with tahini', category:['simple','healthy'], diet:'vegan', subtype:'vegan', country:'lebanon', region:'middleeast', time:15, servings:6, difficulty:'easy', color:'#FFF8E8',
+    ingredients:[{n:'Chickpeas (canned)',a:'400g tin'},{n:'Tahini',a:'4 tbsp'},{n:'Lemon juice',a:'3 tbsp'},{n:'Garlic',a:'1 clove'},{n:'Olive oil',a:'3 tbsp'},{n:'Cumin',a:'1/2 tsp'},{n:'Ice cold water',a:'3-4 tbsp'}],
+    steps:['Drain chickpeas, reserve liquid. Remove skins by rubbing between hands (optional but gives creamier result).','Blend tahini and lemon juice first for 1 min until pale and creamy.','Add garlic, cumin, and blend again.','Add chickpeas gradually while blending.','Add ice water tablespoon by tablespoon to achieve smooth, light consistency.','Serve with olive oil drizzle, paprika, and whole chickpeas.'],
+    tip:'💡 Two secrets: blend the tahini with lemon juice BEFORE adding chickpeas, and always use ice-cold water. This makes hummus impossibly creamy!',
+    tags:['Lebanese','Vegan','Healthy','Quick']
+  },
+  { id:'duck-confit', emoji:'🦆', name:'Duck Leg Confit', desc:'Slow-cooked duck legs preserved in their own fat', category:['gourmet'], diet:'nonveg', subtype:'goose', country:'france', region:'europe', time:480, servings:2, difficulty:'hard', color:'#FFE8D8',
+    ingredients:[{n:'Duck legs',a:'4'},{n:'Coarse salt',a:'30g'},{n:'Garlic',a:'4 cloves'},{n:'Thyme & bay leaves',a:'fresh'},{n:'Black pepper',a:'1 tsp'},{n:'Duck fat',a:'500g'},{n:'Juniper berries',a:'optional'}],
+    steps:['Rub duck legs with salt, garlic, pepper, and thyme. Cure in fridge uncovered for 24 hours.','Rinse off the cure, pat dry.','Place in an oven dish, cover with melted duck fat.','Confit at 90°C for 6-8 hours until meat is tender and pulls from bone.','Remove from fat. Use immediately or refrigerate preserved in fat.','To serve: sear skin-side down in a very hot pan until skin is crispy, then finish in oven at 200°C for 10 mins.'],
+    tip:'💡 Duck confit stored under fat in the fridge improves with time — it keeps for weeks and tastes better after 2-3 days!',
+    tags:['French','Duck/Goose','Non-Veg','Gourmet']
+  },
+  { id:'goose-roast', emoji:'🦢', name:'Roast Goose', desc:'Traditional whole roast goose with apple and herb stuffing', category:['gourmet','bbq'], diet:'nonveg', subtype:'goose', country:'germany', region:'europe', time:300, servings:6, difficulty:'hard', color:'#FFF0D8',
+    ingredients:[{n:'Whole goose',a:'4.5kg'},{n:'Apples',a:'4'},{n:'Onions',a:'2'},{n:'Sage & rosemary',a:'fresh'},{n:'Orange',a:'1'},{n:'Marjoram',a:'2 tsp'},{n:'Salt & pepper',a:'generously'}],
+    steps:['Remove excess fat from goose cavity. Prick skin all over with a fork.','Stuff with chopped apples, onions, and herbs. Truss the bird.','Season generously inside and out with salt, marjoram, and pepper.','Roast breast-side up at 220°C for 30 mins, then reduce to 170°C.','Roast for 3-3.5 hours, draining fat every 45 mins (save this — it\'s liquid gold!).','Rest 30 mins before carving. Serve with braised red cabbage and dumplings.'],
+    tip:'💡 Goose produces incredible amounts of fat — save every drop. Goose fat roasted potatoes are one of the greatest food experiences known to humanity!',
+    tags:['German','Goose','Non-Veg','Festive']
+  },
+];
+
+const countries = [
+  { code:'india', name:'India', flag:'🇮🇳', dishes:12, region:'asia', cuisine:'Spiced curries, biryanis, street food' },
+  { code:'japan', name:'Japan', flag:'🇯🇵', dishes:10, region:'asia', cuisine:'Sushi, ramen, tempura, yakitori' },
+  { code:'italy', name:'Italy', flag:'🇮🇹', dishes:11, region:'europe', cuisine:'Pasta, pizza, risotto, gelato' },
+  { code:'mexico', name:'Mexico', flag:'🇲🇽', dishes:9, region:'americas', cuisine:'Tacos, tamales, mole, enchiladas' },
+  { code:'france', name:'France', flag:'🇫🇷', dishes:13, region:'europe', cuisine:'Croissants, coq au vin, crème brûlée' },
+  { code:'china', name:'China', flag:'🇨🇳', dishes:14, region:'asia', cuisine:'Dim sum, Peking duck, dumplings, hotpot' },
+  { code:'spain', name:'Spain', flag:'🇪🇸', dishes:8, region:'europe', cuisine:'Paella, tapas, tortilla española, gazpacho' },
+  { code:'thailand', name:'Thailand', flag:'🇹🇭', dishes:9, region:'asia', cuisine:'Pad thai, green curry, som tam, mango sticky rice' },
+  { code:'morocco', name:'Morocco', flag:'🇲🇦', dishes:7, region:'africa', cuisine:'Tagine, couscous, pastilla, harira' },
+  { code:'lebanon', name:'Lebanon', flag:'🇱🇧', dishes:8, region:'middleeast', cuisine:'Hummus, shawarma, falafel, tabbouleh' },
+  { code:'greece', name:'Greece', flag:'🇬🇷', dishes:7, region:'europe', cuisine:'Moussaka, souvlaki, spanakopita, baklava' },
+  { code:'korea', name:'Korea', flag:'🇰🇷', dishes:8, region:'asia', cuisine:'Bibimbap, bulgogi, kimchi stew, japchae' },
+  { code:'vietnam', name:'Vietnam', flag:'🇻🇳', dishes:7, region:'asia', cuisine:'Pho, banh mi, bun bo hue, spring rolls' },
+  { code:'peru', name:'Peru', flag:'🇵🇪', dishes:6, region:'americas', cuisine:'Ceviche, lomo saltado, aji de gallina' },
+  { code:'turkey', name:'Turkey', flag:'🇹🇷', dishes:9, region:'middleeast', cuisine:'Kebabs, börek, lahmacun, baklava' },
+  { code:'germany', name:'Germany', flag:'🇩🇪', dishes:7, region:'europe', cuisine:'Schnitzel, sausages, pretzels, roast goose' },
+  { code:'ethiopia', name:'Ethiopia', flag:'🇪🇹', dishes:5, region:'africa', cuisine:'Injera, tibs, kitfo, shiro' },
+  { code:'usa', name:'USA', flag:'🇺🇸', dishes:10, region:'americas', cuisine:'BBQ, burgers, clam chowder, key lime pie' },
+];
+
+// ===== INGREDIENT FINDER =====
+let ingredients = [];
+function addIngredient() {
+  const val = document.getElementById('ingInput').value.trim();
+  if (val && !ingredients.includes(val)) {
+    ingredients.push(val);
+    renderChips();
+  }
+  document.getElementById('ingInput').value = '';
+}
+function quickAdd(i) {
+  if (!ingredients.includes(i)) { ingredients.push(i); renderChips(); }
+}
+function renderChips() {
+  const c = document.getElementById('chipContainer');
+  c.innerHTML = ingredients.map(i => `<div class="chip">${i} <span class="remove" onclick="removeIng('${i}')">✕</span></div>`).join('');
+}
+function removeIng(i) {
+  ingredients = ingredients.filter(x => x !== i);
+  renderChips();
+}
+function findRecipes() {
+  if (ingredients.length === 0) { alert('Please add at least one ingredient!'); return; }
+  const res = document.getElementById('finderResults');
+  const list = document.getElementById('resultsList');
+  const lower = ingredients.map(i => i.toLowerCase());
+  const matches = recipes.map(r => {
+    const ings = r.ingredients.map(i => i.n.toLowerCase());
+    const found = lower.filter(l => ings.some(ing => ing.includes(l) || l.includes(ing.split(' ')[0])));
+    return { ...r, matchCount: found.length, matchPct: Math.round(found.length / lower.length * 100) };
+  }).filter(r => r.matchCount > 0).sort((a,b) => b.matchCount - a.matchCount);
+
+  if (matches.length === 0) {
+    list.innerHTML = '<div style="padding:1rem;text-align:center;color:var(--text-light);">No matches found — try adding more ingredients!</div>';
+  } else {
+    list.innerHTML = matches.map(r => `
+      <div class="result-recipe-card" onclick="openRecipe('${r.id}')">
+        <div class="result-emoji">${r.emoji}</div>
+        <div class="result-info">
+          <h4>${r.name}</h4>
+          <p>${r.desc}</p>
+        </div>
+        <div class="result-meta">
+          <div class="match">${r.matchPct}% match</div>
+          <div class="time">⏱ ${r.time} min</div>
+        </div>
+      </div>`).join('');
+  }
+  res.classList.add('show');
+}
+
+// ===== RECIPE GRID =====
+function renderGrid(filter='all', container='recipeGrid') {
+  const grid = document.getElementById(container);
+  let filtered = recipes;
+  if (filter === 'veg') filtered = recipes.filter(r => r.diet === 'veg' || r.diet === 'vegan');
+  else if (filter === 'vegan') filtered = recipes.filter(r => r.diet === 'vegan');
+  else if (filter === 'nonveg') filtered = recipes.filter(r => r.diet === 'nonveg');
+  else if (filter === 'chicken') filtered = recipes.filter(r => r.subtype === 'chicken');
+  else if (filter === 'seafood') filtered = recipes.filter(r => r.subtype === 'seafood');
+  else if (filter === 'lamb') filtered = recipes.filter(r => r.subtype === 'lamb');
+  else if (filter === 'goose') filtered = recipes.filter(r => r.subtype === 'goose');
+  else if (filter === 'quick') filtered = recipes.filter(r => r.time <= 30);
+  
+  grid.innerHTML = filtered.map(r => recipeCard(r)).join('');
+}
+function recipeCard(r) {
+  const diffClass = {easy:'diff-easy',medium:'diff-medium',hard:'diff-hard'}[r.difficulty];
+  const diffDots = [1,2,3].map((d,i) => {
+    const filled = (r.difficulty==='easy'&&i<1)||(r.difficulty==='medium'&&i<2)||(r.difficulty==='hard'&&i<3);
+    return `<span class="diff-dot ${filled?'':'diff-inactive'}"></span>`;
+  }).join('');
+  const dietBadge = r.diet==='veg'?'<span class="recipe-card-badge badge-veg">🌿 Veg</span>':r.diet==='vegan'?'<span class="recipe-card-badge badge-vegan">🌱 Vegan</span>':'<span class="recipe-card-badge badge-nonveg">🍗 Non-Veg</span>';
+  return `
+    <div class="recipe-card" onclick="openRecipe('${r.id}')">
+      <div class="recipe-card-img" style="background:${r.color}">
+        ${dietBadge}
+        <span style="font-size:3.5rem;">${r.emoji}</span>
+      </div>
+      <div class="recipe-card-body">
+        <h3>${r.name}</h3>
+        <p>${r.desc}</p>
+        <div class="recipe-meta">
+          <span>⏱ ${r.time} min</span>
+          <span>👥 ${r.servings}</span>
+        </div>
+        <div class="difficulty ${diffClass}" style="margin-top:8px;font-size:0.78px;display:flex;align-items:center;gap:4px;">
+          ${diffDots}
+          <span style="font-size:0.75rem;color:var(--text-light);margin-left:4px;">${r.difficulty}</span>
+        </div>
+      </div>
+    </div>`;
+}
+
+function filterDiet(btn, type) {
+  document.querySelectorAll('.diet-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderGrid(type);
+}
+
+// ===== CHEF GRID =====
+function filterChef(cat) {
+  const filtered = recipes.filter(r => r.category.includes(cat));
+  const grid = document.getElementById('chefGrid');
+  grid.innerHTML = filtered.length ? filtered.map(r => recipeCard(r)).join('') : '<div style="padding:1rem;color:var(--text-light);">No recipes in this category yet.</div>';
+}
+
+// ===== COUNTRIES =====
+function renderCountries(region='all') {
+  const grid = document.getElementById('countryGrid');
+  const filtered = region === 'all' ? countries : countries.filter(c => c.region === region);
+  grid.innerHTML = filtered.map(c => `
+    <div class="country-btn" onclick="selectCountry('${c.code}')">
+      <span class="flag">${c.flag}</span>
+      <div class="cname">${c.name}</div>
+      <div class="dish-count">${c.dishes} dishes</div>
+    </div>`).join('');
+  document.getElementById('countryRecipes').classList.remove('show');
+}
+function filterRegion(btn, region) {
+  document.querySelectorAll('.diet-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCountries(region);
+}
+function selectCountry(code) {
+  document.querySelectorAll('.country-btn').forEach(b => b.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+  const c = countries.find(x => x.code === code);
+  const countryRecs = recipes.filter(r => r.country === code);
+  const box = document.getElementById('countryRecipes');
+  box.innerHTML = `
+    <div class="country-header">
+      <div class="big-flag">${c.flag}</div>
+      <div>
+        <h3>${c.name}</h3>
+        <p>${c.cuisine}</p>
+      </div>
+    </div>
+    <div class="recipe-grid">${countryRecs.length ? countryRecs.map(r => recipeCard(r)).join('') : '<div style="padding:1rem;color:var(--text-light);grid-column:1/-1;">More recipes from '+c.name+' coming soon!</div>'}</div>
+  `;
+  box.classList.add('show');
+  setTimeout(() => box.scrollIntoView({ behavior:'smooth', block:'nearest' }), 100);
+}
+
+// ===== MODAL =====
+function openRecipe(id) {
+  const r = recipes.find(x => x.id === id);
+  if (!r) return;
+  document.getElementById('modalEmoji').textContent = r.emoji;
+  document.getElementById('modalTitle').textContent = r.name;
+  document.getElementById('modalDesc').textContent = r.desc;
+  document.querySelector('.modal-hero').style.background = r.color;
+  document.getElementById('modalTags').innerHTML = r.tags.map(t => `<span class="modal-tag">${t}</span>`).join('');
+  document.getElementById('modalInfoRow').innerHTML = `
+    <div class="info-pill"><div class="label">Time</div><div class="value">⏱ ${r.time} min</div></div>
+    <div class="info-pill"><div class="label">Servings</div><div class="value">👥 ${r.servings}</div></div>
+    <div class="info-pill"><div class="label">Difficulty</div><div class="value">${r.difficulty}</div></div>
+    <div class="info-pill"><div class="label">Diet</div><div class="value">${r.diet}</div></div>
+  `;
+  document.getElementById('modalIngredients').innerHTML = r.ingredients.map(i => `<li><span class="ing-name">${i.n}</span><span class="ing-amount">${i.a}</span></li>`).join('');
+  document.getElementById('modalSteps').innerHTML = r.steps.map((s,i) => `
+    <div class="step-item">
+      <div class="step-num">${i+1}</div>
+      <div class="step-text">${s}</div>
+    </div>`).join('');
+  document.getElementById('modalTip').innerHTML = `<strong>Chef's Tip</strong>${r.tip}`;
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+}
+
+function scrollToSection(id) {
+  document.getElementById(id)?.scrollIntoView({ behavior:'smooth' });
+}
+function toggleFav() { alert('Sign up to save your favorite recipes!'); }
+
+// ===== INIT =====
+renderGrid('all', 'recipeGrid');
+renderCountries('all');
+filterChef('simple');
+</script>
+</body>
+</html>
